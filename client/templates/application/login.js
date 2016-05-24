@@ -100,7 +100,7 @@ Template.login.events({
         usrId = userDetails._id;
 
         var securityDetails;
-        securityDetails = PatientSettings.findOne({"userId._id": usrId});
+        securityDetails = PatientSettings.findOne({userId: usrId});
 
         var deviceId;
         deviceId = securityDetails.deviceId;

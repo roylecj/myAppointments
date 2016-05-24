@@ -1,10 +1,17 @@
 Template.appointmentList.onCreated(function() {
   Session.set("resetAppointments", true);
+  Session.setDefault("isLoading", true);
 });
 
 Template.appointmentList.helpers({
   appointmentLoaded: function() {
-    if (PatientAppointments.find().count() === 0) {
+//    if (PatientAppointments.find().count() === 0) {
+//      return false
+//    } else {
+//      return true
+//    }
+
+    if (Session.get("isLoading") === true){
       return false
     } else {
       return true
@@ -17,7 +24,6 @@ Template.appointmentList.helpers({
     return Session.get("resetAppointments")
   },
   resetAppointments: function() {
-
     if (Session.get("resetAppointments") === true ) {
 
 //    PatientAppointments = new Mongo.Collection(null);

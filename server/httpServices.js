@@ -76,7 +76,7 @@ Meteor.methods({
       };
     },
     createPatientSetting: function(deviceId, secretValue, userName) {
-        userId = Meteor.users.findOne({username: userName});
+        userId = Meteor.users.findOne({username: userName})._id;
 
         PatientSettings.insert({
           userId: userId,

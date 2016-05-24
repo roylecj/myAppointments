@@ -29,6 +29,9 @@ Template.login.helpers({
 });
 
 Template.login.events({
+  'click .btnCancel': function(e) {
+    Session.set("newUser", false);
+  },
   'click .btnNewUser': function(e) {
     e.preventDefault();
 
@@ -141,6 +144,5 @@ Template.login.events({
 else {
   sAlert.error("User not found");
 }
-
   }
 })

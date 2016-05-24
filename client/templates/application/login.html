@@ -50,6 +50,10 @@
   <input type="button" value="{{createUserText}}" class="btn {{createUserStatus}} btnNewUser"/>
   <input type="submit" value="Login" class="btn btn-primary"/>
 
+  {{#if newUser}}
+    <input type="button" value="Cancel" class="btn btn-danger btnCancel pull-right"/>
+  {{/if}}
+
 </form>
 
 </template>

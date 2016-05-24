@@ -12,7 +12,7 @@
           <h4 class="list-group-item-heading"><button class="btn btn-small btn-info"><span class="glyphicon glyphicon-calendar"></span></button> {{appointmentDateTime}}</h4>
         </div>
         <div class="list-group-item">
-          <h4 class="list-group-item-heading"><button class="btn btn-small btn-info"><span class="glyphicon glyphicon-map-marker mapItem"></span></button> {{siteName}}</h4>
+          <h4 class="list-group-item-heading"><button class="btn btn-small btn-info mapItem"><span class="glyphicon glyphicon-map-marker"></span></button> {{siteName}}</h4>
           {{#if mapShown}}
           <div class="map-container">
             {{> googleMap name="exampleMap" options=exampleMapOptions}}

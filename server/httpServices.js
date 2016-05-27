@@ -10,7 +10,7 @@ Meteor.methods({
           headers: {"UltraGenda.Device.Id": thisDevice, "UltraGenda.Device.SharedSecret": thisSecret},
           followRedirects: true
         })
-        console.log(result.content);
+//        console.log(result.content);
 
         return result.content;
       } catch (e) {
@@ -20,8 +20,8 @@ Meteor.methods({
     },
     clearAppointments: function( thisId) {
       console.log("Removing all entries for " + thisId);
-      PatientAppointments.remove({userId: thisId});
-      PatientAppointmentDetails.remove({userId: thisId});
+//      PatientAppointments.remove({userId: thisId});
+//      PatientAppointmentDetails.remove({userId: thisId});
     },
     checkDeviceState: function(url, verbType) {
       this.unblock();
@@ -31,7 +31,7 @@ Meteor.methods({
         {
           followRedirects: true
         })
-        console.log(result.content);
+//        console.log(result.content);
 
         return result.content;
       } catch (e) {
@@ -68,7 +68,7 @@ Meteor.methods({
           },
           followRedirects: true
         })
-        console.log(result.content);
+//        console.log(result.content);
 
         return result.content;
       } catch (e) {

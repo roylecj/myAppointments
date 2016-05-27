@@ -4,6 +4,57 @@ Template.appointmentItem.onCreated(function() {
   Session.setDefault("MapShown", false);
 });
 Template.appointmentItem.helpers({
+  detailAvailable: function() {
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+        return false
+    }   else {
+      return true
+    }
+  },
+  siteFound: function() {
+    if (! this.siteName) {
+      return false
+    } else {
+      return true
+    }
+  },
+  phoneFound: function() {
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return false
+    }
+
+    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id});
+//  detailRecord = Session.get("appointmentDetails_" + this._id);
+
+    var sitePhoneNumber;
+
+    sitePhoneNumber = detailRecord.appointmentInTheContextOfAUser.appointment.site.phones[0].number;
+
+    if (!sitePhoneNumber) {
+      return false
+    } else {
+      return true
+    }
+  },
+  instructionsFound: function() {
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return false
+    }
+
+    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id});
+
+    var instructList;
+    var myInstructions = "";
+
+    instructList = detailRecord.appointmentInTheContextOfAUser.appointment.instructions;
+
+    if (instructList.length === 0) {
+      return false
+    } else {
+      return true
+    }
+
+  },
   pageShown: function(pageNum) {
 
     if (Session.get("currentRecord") === this._id) {
@@ -32,7 +83,7 @@ Template.appointmentItem.helpers({
     appTime = moment(this.appointmentDateTime);
 
     detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
-    Session.set("appointmentDetails_" + this._id,  detailRecord);
+//    Session.set("appointmentDetails_" + this._id,  detailRecord);
 
     return appTime.format("LLLL");
   },
@@ -51,9 +102,14 @@ Template.appointmentItem.helpers({
     return appTime.fromNow();
   },
   instructions: function() {
-    // detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
 
-    detailRecord = Session.get("appointmentDetails_" + this._id);
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return "";
+    }
+
+    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id});
+
+    // detailRecord = Session.get("appointmentDetails_" + this._id);
     var instructList;
     var myInstructions = "";
 
@@ -68,8 +124,13 @@ Template.appointmentItem.helpers({
     return myInstructions
   },
   canCancel: function() {
-//    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
-  detailRecord = Session.get("appointmentDetails_" + this._id);
+
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return false
+    }
+
+    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id});
+//  detailRecord = Session.get("appointmentDetails_" + this._id);
     var canCancelAppt;
 
     canCancelAppt = detailRecord.appointmentInTheContextOfAUser.userCanCancelAppointment;
@@ -81,8 +142,13 @@ Template.appointmentItem.helpers({
     }
   },
   sitePhone: function() {
-//    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
-  detailRecord = Session.get("appointmentDetails_" + this._id);
+
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return ""
+    }
+
+    detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id});
+//  detailRecord = Session.get("appointmentDetails_" + this._id);
 
     var sitePhoneNumber;
 
@@ -91,38 +157,66 @@ Template.appointmentItem.helpers({
     return sitePhoneNumber
   },
   duration: function() {
-      detailRecord = Session.get("appointmentDetails_" + this._id);
+
+      if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+        return ""
+      }
+      detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
+
+//      detailRecord = Session.get("appointmentDetails_" + this._id);
 
       var dur = detailRecord.appointmentInTheContextOfAUser.appointment.durationInMinutes + " minutes";
 
       return dur
   },
   address: function() {
-    detailRecord = Session.get("appointmentDetails_" + this._id);
 
+
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return ""
+    }
+//    detailRecord = Session.get("appointmentDetails_" + this._id);
+  detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
     var dur = detailRecord.appointmentInTheContextOfAUser.appointment.location.description;
 
     return dur
   },
   addressLine2: function() {
-    detailRecord = Session.get("appointmentDetails_" + this._id);
 
+
+    if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+      return ""
+    }
+
+//    detailRecord = Session.get("appointmentDetails_" + this._id);
+  detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
     var dur = ""
     dur = detailRecord.appointmentInTheContextOfAUser.appointment.site.address.street1 + " " + detailRecord.appointmentInTheContextOfAUser.appointment.site.address.street2 + " " + detailRecord.appointmentInTheContextOfAUser.appointment.site.address.city + " " + detailRecord.appointmentInTheContextOfAUser.appointment.site.address.state + " " + detailRecord.appointmentInTheContextOfAUser.appointment.site.address.zipCode;
 
     return dur
   },
   resourceName: function() {
-    detailRecord = Session.get("appointmentDetails_" + this._id);
 
+
+        if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+          return ""
+      }
+
+//    detailRecord = Session.get("appointmentDetails_" + this._id);
+  detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
     var value = ""
     value = detailRecord.appointmentInTheContextOfAUser.appointment.resource.name;
 
     return value
   },
   onlineBookingCode: function() {
-    detailRecord = Session.get("appointmentDetails_" + this._id);
 
+
+        if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+          return ""
+        }
+//    detailRecord = Session.get("appointmentDetails_" + this._id);
+  detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
     var bookingCode = detailRecord.appointmentInTheContextOfAUser.appointment.patient.onlineBookingCode;
 
     return bookingCode
@@ -133,9 +227,14 @@ Template.appointmentItem.helpers({
   var thisLat;
   var thisLong;
 
-// debugger
-  detailRecord = Session.get("appointmentDetails_" + this._id);
+      if (PatientAppointmentDetails.find({"appointmentInTheContextOfAUser.appointment.id": this.id}).count() === 0) {
+        return {centre: new google.maps.LatLng("-27.5130292","153.0442283"),
+        zoom: 17}
+      }
 
+// debugger
+//  detailRecord = Session.get("appointmentDetails_" + this._id);
+  detailRecord = PatientAppointmentDetails.findOne({"appointmentInTheContextOfAUser.appointment.id": this.id, userId: Meteor.userId()});
   locationRecord = LocationLinks.findOne({name: detailRecord.appointmentInTheContextOfAUser.appointment.site.abbreviation})
 
   thisLat = locationRecord.lat;
@@ -171,7 +270,6 @@ Template.appointmentItem.events({
     thisId = this._id;
 
     Meteor.call("callUGBroka", thisLink,"POST", deviceId, secretValue, function(e, result) {
-
       PatientAppointments.remove({_id: thisId});
       // Session.set("resetAppointments", true);
 

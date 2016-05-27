@@ -1,6 +1,7 @@
 Template.appointmentList.onCreated(function() {
   Session.set("resetAppointments", true);
   Session.setDefault("isLoading", true);
+  Session.setDefault("includePast", false);
 });
 
 Template.appointmentList.helpers({
@@ -26,7 +27,8 @@ Template.appointmentList.helpers({
   resetAppointments: function() {
     if (Session.get("resetAppointments") === true ) {
 
-//    PatientAppointments = new Mongo.Collection(null);
+    PatientAppointments = new Mongo.Collection(null);
+    PatientAppointmentDetails = new Mongo.Collection(null);
 
     var deviceId;
     var secretValue;
@@ -57,7 +59,6 @@ Template.appointmentList.helpers({
 
 
               Meteor.call("callUGBroka", urlString, "GET", deviceId, secretValue, function(eInner, resultInner) {
-
                   jsonDetail = JSON.parse(resultInner);
                   var detailEntry = PatientAppointmentDetails.insert(jsonDetail);
                   PatientAppointmentDetails.update({_id: detailEntry}, {$set: {userId: Meteor.userId() }});
@@ -74,6 +75,56 @@ Template.appointmentList.helpers({
   },
   appointments: function() {
 //    debugger
-    return PatientAppointments.find()
+
+  var nowDate;
+
+  nowDate = new Date();
+  var nowDateFormat;
+
+  nowDateFormat = moment(nowDate).format('YYYY-MM-DD');
+
+  if (Session.get("includePast")) {
+    return PatientAppointments.find({}, {sort: {appointmentDateTime:-1}})
+  } else {
+    return PatientAppointments.find({ appointmentDateTime: {$gt: nowDateFormat}}, {sort: {appointmentDateTime:-1}} )
+  }
+},
+appointmentsInThePast: function() {
+
+  var nowDate;
+
+  nowDate = new Date();
+  var nowDateFormat;
+
+  nowDateFormat = moment(nowDate).format('YYYY-MM-DD');
+
+  if (PatientAppointments.find({ appointmentDateTime: {$lt: nowDateFormat}}).count() === 0) {
+    return false
+  } else {
+    return true
+  }
+},
+pastAppointments: function() {
+  var nowDate;
+
+  nowDate = new Date();
+  var nowDateFormat;
+
+  nowDateFormat = moment(nowDate).format('YYYY-MM-DD');
+
+  return PatientAppointments.find({ appointmentDateTime: {$lt: nowDateFormat}}).count()
+},
+showOrHide: function() {
+  if (Session.get("includePast")) {
+    return "Hide"
+  } else {
+    return "Show"
+  }
+}
+});
+
+Template.appointmentList.events({
+  'click .btnShowHidePast': function(e, t) {
+    Session.set("includePast", ! Session.get("includePast"));
   }
 });
